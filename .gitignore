@@ -1,0 +1,30 @@
+# Node dependencies
+node_modules/
+.npm
+
+# NextJS build files
+.next/
+out/
+build/
+
+# Python virtual env and cache
+backend/venv/
+backend/__pycache__/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# SQLite Database
+backend/crm.db
+*.db
+
+# Environments and IDEs
+.env
+.env.local
+.env.*.local
+.vscode/
+.idea/
+.gemini/
+.DS_Store
+Thumbs.db
