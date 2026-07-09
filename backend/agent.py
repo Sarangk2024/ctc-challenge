@@ -467,30 +467,20 @@ def run_agent_node(state: AgentState) -> Dict[str, Any]:
             response_text = f"🔍 **HCP Profile Details & History retrieved successfully!**\n\n```json\n{tool_res}\n```"
             
         # C. Check scientific literature search intent
-        elif "lipitor" in cleaned_query or "humira" in cleaned_query or "keytruda" in cleaned_query or "oncoboost" in cleaned_query:
-            if any(w in cleaned_query for w in ["efficacy", "dosage", "study", "info", "clinical"]):
-                tool_triggered = "search_scientific_info"
-                tool_res = search_scientific_info.invoke({"query": last_query})
-                response_text = f"🔬 **Clinical Information Response:**\n\n{tool_res}"
-            else:
-                tool_triggered = "log_interaction"
-                log_interaction.invoke({
-                    "hcp_id": extracted_entities["hcp_id"],
-                    "interaction_type": extracted_entities["interaction_type"],
-                    "summary": extracted_entities["summary"],
-                    "date": extracted_entities["date"],
-                    "time": extracted_entities["time"],
-                    "attendees": extracted_entities["attendees"],
-                    "materials_shared": extracted_entities["materials_shared"],
-                    "samples_distributed": extracted_entities["samples_distributed"],
-                    "sentiment": extracted_entities["sentiment"],
-                    "outcomes": extracted_entities["outcomes"],
-                    "next_steps": extracted_entities["next_steps"]
-                })
-                response_text = "✅ **Interaction logged successfully!** The details (HCP Name, Date, Sentiment, and Materials) have been automatically populated based on your summary. Would you like me to suggest a specific follow-up action, such as scheduling a meeting?"
+        elif any(d in cleaned_query for d in ["lipit", "humir", "keytrud", "onco", "lipitor", "humira", "keytruda", "oncoboost"]):
+            tool_triggered = "search_scientific_info"
+            matched_drug = "efficacy"
+            for d in ["lipit", "humir", "keytrud", "onco"]:
+                if d in cleaned_query:
+                    if d == "lipit": matched_drug = "lipitor"
+                    elif d == "humir": matched_drug = "humira"
+                    elif d == "keytrud": matched_drug = "keytruda"
+                    elif d == "onco": matched_drug = "oncoboost"
+            tool_res = search_scientific_info.invoke({"query": matched_drug})
+            response_text = f"🔬 **Clinical Information Response:**\n\n{tool_res}"
         
         # D. Check Sales Metrics calculator intent
-        elif any(w in cleaned_query for w in ["metric", "performance", "stat", "total", "duration", "engagement"]):
+        elif any(w in cleaned_query for w in ["metric", "performance", "stat", "total", "duration", "engagement", "matrics", "matric", "sales"]):
             tool_triggered = "calculate_sales_metrics"
             tool_res = calculate_sales_metrics.invoke({"hcp_id": hcp_id})
             try:
